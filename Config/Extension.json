@@ -1,0 +1,19 @@
+{
+  "name":  "Your First Extension",
+  "description": "Description of your Extension",
+  "version": "1.0.0",
+  "browsers": [ "chrome", "firefox" ],
+  "author": {
+    "name": "John Doe",
+    "email": "SampleExtension@users.noreply.github.com"
+  },
+  "icons": {
+    "19": "Assets/Icons/Logo_19.png",
+    "38": "Assets/Icons/Logo_38.png",
+    "48": "Assets/Icons/Logo_48.png"
+  },
+  "proccess": {
+      "type": "module",
+      "file": "Backend.js"
+  }
+}
