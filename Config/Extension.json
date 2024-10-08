@@ -1,8 +1,12 @@
 {
-  "name":  "Your First Extension",
+  "name": "My Extension",
   "description": "Description of your Extension",
   "version": "1.0.0",
-  "browsers": [ "chrome", "firefox" ],
+  "debug": true,
+  "browsers": [
+    "chrome",
+    "firefox"
+  ],
   "author": {
     "name": "John Doe",
     "email": "SampleExtension@users.noreply.github.com"
@@ -10,10 +14,14 @@
   "icons": {
     "19": "Assets/Icons/Logo_19.png",
     "38": "Assets/Icons/Logo_38.png",
-    "48": "Assets/Icons/Logo_48.png"
+    "48": "Assets/Icons/Logo_48.png",
+    "96": "Assets/Icons/Logo_96.png"
   },
   "proccess": {
-      "type": "module",
-      "file": "Backend.js"
-  }
+    "type": "module",
+    "file": "Backend.js"
+  },
+  "permissions": [
+    "Toolbar"
+  ]
 }
