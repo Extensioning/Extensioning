@@ -1,15 +1,19 @@
-import open, { openApp, apps } from 'open';
+import WebExt from 'web-ext';
 import Path from 'path';
 
 class Development {
     constructor() {
-        let path = Path.resolve(import.meta.dirname, '../Source/');
+        let path = Path.resolve(import.meta.dirname, '../Build/firefox/');
 
-        // apps.firefox ['about:debugging#/runtime/this-firefox']
-        // apps.chrome
-        // apps.edge
-        openApp(apps.firefox, {
-            arguments: ['-install-extension', path]
+        WebExt.cmd.run({
+            artifactsDir: '',
+            startUrl: 'about:debugging#/runtime/this-firefox',
+            devtools: true,
+            sourceDir: path
+        }, {}).then(r => {
+
+        }).catch(r => {
+            console.error(r);
         });
     }
 }
