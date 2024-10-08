@@ -1,5 +1,4 @@
-import Logger from '../Library/Logger.js';
-import Archiver from 'archiver';
+import Logger from './Logger.js';
 import FS from 'fs';
 import Path from 'path';
 
@@ -16,6 +15,7 @@ class Build {
     ConfigFile = '/Config/Extension.json';
     BuildDirectory = '/Build';
     SourceDirectory = '/Source';
+    LibraryDirectory = '/Library';
 
     constructor() {
         Logger.info('Starting Building process...');
@@ -36,7 +36,7 @@ class Build {
 
         return new Promise((success, error) => {
             FS.readFile(Path.join(this.Path, this.ConfigFile), 'UTF-8', (err, content) => {
-                if(err) {
+                if (err) {
                     error(err);
                     return;
                 }
@@ -57,7 +57,7 @@ class Build {
             recursive: true,
             force: true
         }, (error) => {
-            if(error){
+            if (error) {
                 Logger.error(error.message);
             }
 
@@ -66,7 +66,7 @@ class Build {
             FS.mkdir(Path.join(this.Path, this.BuildDirectory), {
                 recursive: true
             }, (error) => {
-                if(error){
+                if (error) {
                     Logger.error(error.message);
                 }
 
@@ -76,12 +76,12 @@ class Build {
     }
 
     createBaseExtension() {
-        if(typeof(this.Config) === 'undefined') {
+        if (typeof (this.Config) === 'undefined') {
             Logger.error('The Config-Object is empty. Seems that the file', '{bgWhite.black ' + Path.join(this.ConfigFile) + '}', 'is broken!');
             return;
         }
 
-        if(typeof(this.Config.browsers) === 'undefined' || this.Config.browsers.lenght === 0) {
+        if (typeof (this.Config.browsers) === 'undefined' || this.Config.browsers.lenght === 0) {
             Logger.error('Error on {bgWhite.black ' + Path.join(this.ConfigFile) + '}:', 'No browser specified.', '\n\n\t\t{yellow Possible values on "browsers" in Configuration:}', '\n\t\t{cyan: ' + [
                 'edge',
                 'chrome',
@@ -93,7 +93,7 @@ class Build {
         }
 
         this.Config.browsers.forEach((browser) => {
-           this.buildFor(browser);
+            this.buildFor(browser);
         });
     }
 
@@ -102,44 +102,51 @@ class Build {
 
         let instance = null;
 
-        switch(browser) {
+        switch (browser) {
             case 'edge':
                 instance = new Edge();
-            break;
+                break;
             case 'chrome':
                 instance = new Chrome();
-            break;
+                break;
             case 'firefox':
                 instance = new Firefox();
                 break;
             case 'opera':
                 instance = new Opera();
-            break;
+                break;
             case 'safari':
                 instance = new Safari();
-            break;
+                break;
         }
 
         instance.getName = () => {
-          return browser;
+            return browser;
         };
 
         Logger.log('Build', '{cyan ' + instance.getName() + '}: Create folder: {bgWhite.black ' + Path.join(this.BuildDirectory, browser) + '}');
+
         FS.mkdir(Path.join(this.Path, this.BuildDirectory, browser), {
             recursive: true
         }, (error) => {
-            if(error){
+            if (error) {
                 Logger.error(error.message);
             }
 
-            if(typeof(instance.onManifest) === 'undefined') {
+            if (typeof (instance.onManifest) === 'undefined') {
                 Logger.warn('{cyan ' + instance.getName() + '}: Skipping Manifest.');
                 this.buildContent(instance);
                 return;
             }
 
-            FS.writeFile(Path.join(this.Path, this.BuildDirectory, browser, 'manifest.json'), JSON.stringify(instance.onManifest(this.Config)), err => {
-                if(err) {
+            let indent = 0;
+
+            if (typeof (this.Config.debug) !== 'undefined' && this.Config.debug) {
+                indent = 2;
+            }
+
+            FS.writeFile(Path.join(this.Path, this.BuildDirectory, browser, 'manifest.json'), JSON.stringify(instance.onManifest(this.Config), null, indent), err => {
+                if (err) {
                     Logger.error(err);
                     return;
                 }
@@ -153,7 +160,7 @@ class Build {
     }
 
     buildContent(browser) {
-        if(typeof(browser.onBuild) === 'undefined') {
+        if (typeof (browser.onBuild) === 'undefined') {
             Logger.warn('{cyan ' + browser.getName() + '}: Skipping Build.');
             return;
         }
@@ -162,6 +169,13 @@ class Build {
         Logger.info('{cyan ' + browser.getName() + '}: Copy Extension-Source from {bgWhite.black ' + Path.join(this.SourceDirectory) + '} to {bgWhite.black ' + Path.join(this.BuildDirectory) + '}');
 
         FS.cpSync(Path.join(this.Path, this.SourceDirectory), Path.join(this.Path, this.BuildDirectory, browser.getName()), {
+            recursive: true
+        });
+
+        /* Copying the Library */
+        Logger.info('{cyan ' + browser.getName() + '}: Copy Library from {bgWhite.black ' + Path.join(this.LibraryDirectory) + '} to {bgWhite.black ' + Path.join(this.BuildDirectory, this.LibraryDirectory) + '}');
+
+        FS.cpSync(Path.join(this.Path, this.LibraryDirectory), Path.join(this.Path, this.BuildDirectory, browser.getName(), this.LibraryDirectory), {
             recursive: true
         });
 

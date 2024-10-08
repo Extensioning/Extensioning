@@ -4,8 +4,11 @@ export default class Firefox {
     }
 
     onManifest(config) {
-        let json = {
+        let manifest = {
             manifest_version: 2,
+            permissions: [
+                '*://*/*'
+            ],
             browser_specific_settings: {
                 gecko: {
                     /*
@@ -15,49 +18,64 @@ export default class Firefox {
                     id: 'TODO-RANDOM-ID',
                     strict_min_version: '42.0'
                 }
-            }
+            },
+            web_accessible_resources: [
+                'Library/Extension.js'
+            ],
         };
 
-        if(typeof(config.author) !== 'undefined') {
-            if(typeof(config.author.email) !== 'undefined') {
-                json.browser_specific_settings.gecko.id = config.author.email;
+        if (typeof (config.author) !== 'undefined') {
+            if (typeof (config.author.email) !== 'undefined') {
+                manifest.browser_specific_settings.gecko.id = config.author.email;
             }
         }
 
-        if(typeof(config.name) !== 'undefined') {
-            json.name = config.name;
+        if (typeof (config.name) !== 'undefined') {
+            manifest.name = config.name;
         }
 
-        if(typeof(config.description) !== 'undefined') {
-            json.description = config.description;
+        if (typeof (config.description) !== 'undefined') {
+            manifest.description = config.description;
         }
 
-        if(typeof(config.version) !== 'undefined') {
-            json.version = config.version;
+        if (typeof (config.version) !== 'undefined') {
+            manifest.version = config.version;
         }
 
-        if(typeof(config.icons) !== 'undefined') {
-            if(typeof(config.icons['48']) !== 'undefined') {
-                json.icons = {
-                    '48': config.icons['48']
-                };
+        if (typeof (config.icons) !== 'undefined') {
+            if (typeof (manifest.icons) === 'undefined') {
+                manifest.icons = {};
             }
+
+            Object.keys(config.icons).forEach((type) => {
+                manifest.icons[type] = config.icons[type];
+            });
         }
 
-        if(typeof(config.proccess) !== 'undefined') {
-            json.background = {
+        if (typeof (config.proccess) !== 'undefined') {
+            manifest.background = {
                 persistent: true,
                 scripts: [
                     config.proccess.file
                 ]
             };
 
-            if(typeof(config.proccess.type) !== 'undefined' && config.proccess.type === 'module') {
-                json.background.type = 'module';
+            if (typeof (config.proccess.type) !== 'undefined' && config.proccess.type === 'module') {
+                manifest.background.type = 'module';
             }
         }
 
-        return json;
+        if (typeof (config.permissions) !== 'undefined') {
+            config.permissions.forEach((entry) => {
+                if (entry === 'Toolbar') {
+                    manifest.browser_action = {};
+                    manifest.permissions.push('activeTab');
+                    manifest.permissions.push('tabs');
+                }
+            });
+        }
+
+        return manifest;
     }
 
     onBuild() {
