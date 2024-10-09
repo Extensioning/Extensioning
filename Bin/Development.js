@@ -1,6 +1,6 @@
 import WebExt from 'web-ext';
-import ChromeLaunch from 'chrome-launch';
 import Path from 'path';
+import * as ChromeLauncher from "chrome-launcher";
 
 class Development {
     constructor() {
@@ -21,11 +21,24 @@ class Development {
     }
 
     startChrome() {
-        const args = [
-            '--load-extension=' + Path.resolve(import.meta.dirname, '../Build/chrome/')
-        ];
+        ChromeLauncher.launch({
+            startingUrl: 'about:extensions',
+            chromeFlags: [
+                '--disable-features=enableasyncdns',
+                '--load-extension=' + Path.resolve(import.meta.dirname, '../Build/chrome/'),
+                '--dev',
+                '--enable-logging',
+                '--test-type=ui',
+                '--homepage=about:extensions',
+                '--allow-running-insecure-content',
+                '--auto-open-devtools-for-tabs',
+                '--enable-auto-reload'
+            ]
+        }).then(chrome => {
 
-        ChromeLaunch('chrome://extensions/', {args});
+        }).catch(r => {
+            console.error(r);
+        });
     }
 }
 
