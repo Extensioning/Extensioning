@@ -28,9 +28,16 @@ export default (new class Extension {
     constructor() {
         this.Events = new Events();
 
-        /* If Both defined */
-        if (typeof (window.chrome) !== 'undefined' || typeof (window.browser) !== 'undefined') {
-            this.findEngine(window.browser || window.chrome).then((browser) => {
+        let api = null;
+
+        if (typeof (browser) !== 'undefined') {
+            api = browser;
+        } else if (typeof (chrome) !== 'undefined') {
+            api = chrome;
+        }
+
+        if (api !== null) {
+            this.findEngine(api).then((browser) => {
                 this.handleEngine(browser);
             }).catch((error) => {
                 Logger.warn('Unsupported Browser-Engine:', error);
@@ -45,7 +52,17 @@ export default (new class Extension {
     findEngine(destination) {
         return new Promise((success, failure) => {
             try {
-                destination.runtime.getBrowserInfo().then((data) => {
+                let target = null;
+
+                if (typeof (destination.runtime.getBrowserInfo) !== 'undefined') {
+                    target = destination.runtime.getBrowserInfo();
+                } else {
+                    this.Events.emit('engine', 'Chrome');
+                    success('Chrome');
+                    return;
+                }
+
+                target.then((data) => {
                     this.Events.emit('engine', data.vendor);
                     success(data.vendor);
                 }).catch(failure);
@@ -64,6 +81,15 @@ export default (new class Extension {
                 if (typeof (Mozilla.onInit) !== 'undefined') {
                     Mozilla.onInit(this);
                     this.Events.emit('engineInit', Mozilla);
+                }
+                break;
+            case 'Chrome':
+                Logger.info('Found Chrome-Engine.');
+                this.Engine = Engine.CHROME;
+
+                if (typeof (Chrome.onInit) !== 'undefined') {
+                    Chrome.onInit(this);
+                    this.Events.emit('engineInit', Chrome);
                 }
                 break;
             default:

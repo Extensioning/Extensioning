@@ -33,17 +33,23 @@ export default (new class Engine {
                 }
 
                 update() {
-                    browser.browserAction.setIcon({
-                        path: this.Icon
-                    });
+                    if (this.Icon !== null) {
+                        browser.browserAction.setIcon({
+                            path: this.Icon
+                        });
+                    }
 
-                    browser.browserAction.setTitle({
-                        title: this.Text
-                    });
+                    if (this.Text !== null) {
+                        browser.browserAction.setTitle({
+                            title: this.Text
+                        });
+                    }
 
-                    browser.browserAction.setPopup({
-                        popup: this.Content
-                    });
+                    if (this.Content !== null) {
+                        browser.browserAction.setPopup({
+                            popup: this.Content
+                        });
+                    }
                 }
 
                 setText(text) {
