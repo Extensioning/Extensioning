@@ -16,6 +16,7 @@ export default (new class Engine {
             success(new class Toolbar {
                 Callbacks = null;
                 Text = null;
+                Content = null;
                 Icon = null;
 
                 constructor() {
@@ -39,6 +40,10 @@ export default (new class Engine {
                     browser.browserAction.setTitle({
                         title: this.Text
                     });
+
+                    browser.browserAction.setPopup({
+                        popup: this.Content
+                    });
                 }
 
                 setText(text) {
@@ -48,6 +53,11 @@ export default (new class Engine {
 
                 setIcon(file) {
                     this.Icon = file;
+                    this.update();
+                }
+
+                setContent(file) {
+                    this.Content = file;
                     this.update();
                 }
 
