@@ -132,7 +132,7 @@ class Development {
             default:
                 Logger.error('The Browser will currently not supported:', this.Browser);
                 Logger.warn('Following Browsers currently available: {cyan ' + this.Browsers.join('}, {cyan ') + '}');
-                Logger.info('You can select given browser by type {bgWhiteBright.black npm run dev }{bgWhiteBright.redBright browser=<name>}');
+                Logger.info('You can select given browser by type {bgWhiteBright.black npm run dev }{bgWhiteBright.redBright browser=<name>}\n\t       or type {bgWhiteBright.black npm run dev }{bgWhiteBright.redBright list} for more informations.');
                 break;
         }
     }
