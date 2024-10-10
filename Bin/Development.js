@@ -11,9 +11,9 @@ class Development {
     Browsers = ['Firefox', 'Chrome'];
 
     constructor() {
-        if (process.argv.slice(2).length === 0) {
-            //    this.printHelp();
-        }
+        /*if (process.argv.slice(2).length === 0) {
+            this.printHelp();
+        }*/
 
         process.argv.slice(2).forEach((argument, index, array) => {
             let pair = argument.split('=');
@@ -58,16 +58,14 @@ class Development {
     }
 
     printHelp() {
-        let text = '+++ Help +++';
-        text += '\nUSAGE:';
-        text += '\n\tnpm run dev [OPTIONS]';
+        let text = '{bgGray.black USAGE}';
+        text += '\n\t{yellow npm} {gray run dev} {green [OPTIONS]}';
         text += '\n';
-        text += '\nOPTIONS:';
-        text += '\n\thelp\t\t\t- Print this Help';
-        text += '\n\tversion\t\t\t- Print the Version';
-        text += '\n\tbrowser={yellow <value>}\t\t- use given Browser';
-        text += '\n\t\t\t\t  {gray Possible Values:}';
-        text += '\n\t\t\t\t  {cyan ' + this.Browsers.join('}, {cyan ') + '}';
+        text += '\n{bgGray.black OPTIONS}';
+        text += '\n\t{green help}\t\t\t- Print this Help.';
+        text += '\n\t{green version}\t\t\t- Print the Version of the tool.';
+        text += '\n\t{green browser}{gray =}{red.italic <value>}\t\t- Use given Browser. The specific Browser must be already installed.';
+        text += '\n\t\t\t\t  {gray Possible Values:} {cyan ' + this.Browsers.join('}, {cyan ') + '}';
 
         console.log(template(text));
         process.exit(0);
