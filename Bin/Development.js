@@ -1,17 +1,18 @@
 import WebExt from 'web-ext';
 import Path from 'path';
 import Logger from './Logger.js';
+import DefaultBrowser from 'default-browser';
 import * as ChromeLauncher from "chrome-launcher";
 import {template} from 'chalk-template';
 
 class Development {
     Browser = null;
     Version = '1.0.0';
-    Browsers = [ 'Firefox', 'Chrome' ];
+    Browsers = ['Firefox', 'Chrome'];
 
     constructor() {
-        if(process.argv.slice(2).length === 0) {
-            this.printHelp();
+        if (process.argv.slice(2).length === 0) {
+            //    this.printHelp();
         }
 
         process.argv.slice(2).forEach((argument, index, array) => {
@@ -19,7 +20,7 @@ class Development {
             let name = pair[0].toLowerCase();
             let value = pair[1];
 
-            switch(name) {
+            switch (name) {
                 case 'help':
                     this.printHelp();
                     break;
@@ -29,16 +30,22 @@ class Development {
                 case 'browser':
                     let position = this.Browsers.join('~').toLowerCase().split('~').indexOf(value.toLowerCase());
 
-                    if(position >= 0) {
+                    if (position >= 0) {
                         this.Browser = this.Browsers[position];
                     }
                     break;
             }
         });
 
-        if(this.Browser === null) {
+        if (this.Browser === null) {
             Logger.warn('No browser given, using system-default.');
-            this.Browser = 'Default';
+            DefaultBrowser().then((browser) => {
+                this.Browser = browser.name;
+                Logger.info('Selected Browser:', this.Browser);
+                this.handleBrowserSelection();
+            });
+
+            return;
         }
 
         Logger.info('Selected Browser:', this.Browser);
@@ -62,21 +69,22 @@ class Development {
         text += '\n\t\t\t\t  {gray Possible Values:}';
         text += '\n\t\t\t\t  {cyan ' + this.Browsers.join('}, {cyan ') + '}';
 
-
         console.log(template(text));
         process.exit(0);
     }
 
     handleBrowserSelection() {
-        switch(this.Browser) {
+        switch (this.Browser) {
             case 'Firefox':
                 this.startFirefox();
-            break;
+                break;
             case 'Chrome':
                 this.startChrome();
-            break;
+                break;
             default:
-                // @ToDo find system-default browser
+                Logger.error('The Browser will currently not supported:', this.Browser);
+                Logger.warn('Following Browsers currently available: {cyan ' + this.Browsers.join('}, {cyan ') + '}');
+                Logger.info('You can select given browser by type {bgWhiteBright.black npm run dev }{bgWhiteBright.redBright browser=<name>}');
                 break;
         }
     }
