@@ -4,6 +4,7 @@ import Logger from './Logger.js';
 import DefaultBrowser from 'default-browser';
 import * as ChromeLauncher from "chrome-launcher";
 import {template} from 'chalk-template';
+import FirefoxFinder from "./Helpers/FirefoxFinder.js";
 
 class Development {
     Browser = null;
@@ -17,7 +18,7 @@ class Development {
 
         process.argv.slice(2).forEach((argument, index, array) => {
             let pair = argument.split('=');
-            let name = pair[0].toLowerCase();
+            let name = pair[0].toLowerCase().trim();
             let value = pair[1];
 
             switch (name) {
@@ -26,6 +27,9 @@ class Development {
                     break;
                 case 'version':
                     this.printVersion();
+                    break;
+                case 'list':
+                    this.printList();
                     break;
                 case 'browser':
                     let position = this.Browsers.join('~').toLowerCase().split('~').indexOf(value.toLowerCase());
@@ -63,9 +67,55 @@ class Development {
         text += '\n';
         text += '\n{bgGray.black OPTIONS}';
         text += '\n\t{green help}\t\t\t- Print this Help.';
+        text += '\n\t{green list}\t\t\t- Pint all available Browsers.';
         text += '\n\t{green version}\t\t\t- Print the Version of the tool.';
         text += '\n\t{green browser}{gray =}{red.italic <value>}\t\t- Use given Browser. The specific Browser must be already installed.';
         text += '\n\t\t\t\t  {gray Possible Values:} {cyan ' + this.Browsers.join('}, {cyan ') + '}';
+
+        console.log(template(text));
+        process.exit(0);
+    }
+
+    async printList() {
+        let defaultBrowser = (await DefaultBrowser()).name;
+        let text = '{bgGray.black DEFAULT}';
+        text += '\n\tYour default Browser is {blue ' + defaultBrowser + '}.';
+
+        if (this.Browsers.join('~').toLowerCase().split('~').indexOf(defaultBrowser.toLowerCase()) === -1) {
+            text += '\n\n\t{yellow [WARNING]} {red Your default Browser will currently not supported!} 🙁';
+            text += '\n\t          {grey You must set the target browser with }{green browser}{grey =}{yellow <name> }{grey parameter!}';
+        }
+
+        text += '\n\n{bgGray.black AVAILABLE}';
+
+        this.Browsers.forEach((name) => {
+            let installed = false;
+
+            switch (name) {
+                case 'Firefox':
+
+                    try {
+                        FirefoxFinder.getPath();
+                        installed = true;
+                    } catch (e) {
+                    }
+                    break;
+                case 'Chrome':
+                    try {
+                        ChromeLauncher.getChromePath();
+                        installed = true;
+                    } catch (e) {
+                    }
+                    break;
+            }
+            text += '\n\t{cyan ' + name + '}\t\t\t';
+
+            if (installed) {
+                text += '{bgGreen.whiteBright Installed}';
+            } else {
+                text += '{bgRed.whiteBright NOT Installed}';
+            }
+        });
 
         console.log(template(text));
         process.exit(0);
