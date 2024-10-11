@@ -1,5 +1,10 @@
 # Extensioning
-Create crossbrowser extensions with nomalized API
+Create cross-browser extensions with normalized and simple API.
+
+> [!NOTICE]
+> This framework is currently still under development.
+> 
+> Not all features have been implemented yet.
 
 ## Browser-Support
 | Logo                               | Support | Browser             | Engine                                  | API         | Docs                                                                                                                                             |
