@@ -1,6 +1,7 @@
 import Logger from './Logger.js';
 import FS from 'fs';
 import Path from 'path';
+import {template} from 'chalk-template';
 
 /* Targets */
 import Edge from './Targets/Edge.js';
@@ -12,14 +13,65 @@ import Safari from './Targets/Safari.js';
 class Build {
     Path;
     Config;
+    Version = '1.0.0';
     ConfigFile = '/Config/Extension.json';
     BuildDirectory = '/Build';
     SourceDirectory = '/Source';
     LibraryDirectory = '/Library';
 
     constructor() {
-        Logger.info('Starting Building process...');
         this.Path = Path.resolve(import.meta.dirname, '../');
+
+        /*if (process.argv.slice(2).length === 0) {
+            this.printHelp();
+        }*/
+
+        process.argv.slice(2).forEach((argument, index, array) => {
+            let pair = argument.split('=');
+            let name = pair[0].toLowerCase().trim();
+            let value = pair[1];
+
+            switch (name) {
+                case 'help':
+                    this.printHelp();
+                    break;
+                case 'version':
+                    this.printVersion();
+                    break;
+                case 'config':
+                    if(typeof(value) === 'undefined') {
+                        Logger.info('Dumped Configuration', {
+                            Path: this.Path,
+                            ConfigFile: this.ConfigFile,
+                            BuildDirectory: this.BuildDirectory,
+                            SourceDirectory: this.SourceDirectory,
+                            LibraryDirectory: this.LibraryDirectory
+                        });
+                        process.exit(0);
+                        return;
+                    }
+                    this.ConfigFile = value;
+                    break;
+                case 'output':
+                    this.BuildDirectory = value;
+                    break;
+                case 'source':
+                    this.SourceDirectory = value;
+                    break;
+                case 'library':
+                    this.LibraryDirectory = value;
+                    break;
+                case 'path':
+                    this.Path = value;
+                    break;
+            }
+        });
+
+        this.run();
+    }
+
+    run() {
+        Logger.info('Starting Building process...');
         Logger.info('Set Path:', '{bgWhite.black ' + this.Path + '}');
 
         /* Load the Configuration */
@@ -29,6 +81,28 @@ class Build {
         }).catch((error) => {
             Logger.error(error.message);
         });
+    }
+
+    printVersion() {
+        console.log(this.Version);
+        process.exit(0);
+    }
+
+    printHelp() {
+        let text = '{bgGray.black USAGE}';
+        text += '\n\t{yellow npm} {gray run build} {green [OPTIONS]}';
+        text += '\n';
+        text += '\n{bgGray.black OPTIONS}';
+        text += '\n\t{green help}\t\t\t- Print this Help.';
+        text += '\n\t{green version}\t\t\t- Print the Version of the tool.';
+        text += '\n\t{green path}{gray =}{red.italic <path>}\t\t- Set Working-Path (Default: {bgWhite.black ' + Path.join(this.Path).replaceAll('\\', '\\\\') + '}).';
+        text += '\n\t{green config}{gray =}{red.italic <file>}\t\t- Set Configuration-File.';
+        text += '\n\t{green output}{gray =}{red.italic <path>}\t\t- Set the Output-Path (Default: {bgWhite.black /Build}).';
+        text += '\n\t{green source}{gray =}{red.italic <path>}\t\t- Set the Source-Path (Default: {bgWhite.black /Source}).';
+        text += '\n\t{green library}{gray =}{red.italic <path>}\t\t- Set the Library-Path (Default: {bgWhite.black /Library}).';
+
+        console.log(template(text));
+        process.exit(0);
     }
 
     loadConfiguration() {

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "clean": "turbo clean && rm -rf node_modules",
+    "clean": "rm -rf ./Build && rm -rf ./node_modules",
     "open": "node ./Bin/Development.js",
     "build": "node ./Bin/Build.js",
     "dev": "npm run build & npm run open"
