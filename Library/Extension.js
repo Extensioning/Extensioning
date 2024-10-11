@@ -2,24 +2,12 @@ import LoggerInstance from './Logger.js';
 import Events from './Events.js';
 import Chrome from './Target/chrome/Engine.js';
 import Mozilla from './Target/mozilla/Engine.js';
-
+import TypeInstance from './Constants/Type.js';
+import EngineInstance from './Constants/Engine.js';
 
 export const Logger = LoggerInstance;
-
-export const Type = {
-    TOOLBAR: 1,
-    ADDRESSBAR: 2,
-    CONTEXTMENU: 3,
-    SIDEBAR: 4,
-    OPTIONS: 5,
-    WINDOW: 6,
-    DEVTOOLS: 7
-};
-
-export const Engine = {
-    CHROME: 1,
-    MOZILLA: 2
-};
+export const Type = TypeInstance;
+export const Engine = EngineInstance;
 
 export default (new class Extension {
     Engine = null;
