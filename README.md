@@ -1,7 +1,7 @@
 # Extensioning
 Create cross-browser extensions with normalized and simple API.
 
-> [!NOTICE]
+> [!NOTE]
 > This framework is currently still under development.
 > 
 > Not all features have been implemented yet.
