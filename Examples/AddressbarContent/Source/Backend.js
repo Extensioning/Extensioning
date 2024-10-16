@@ -1,6 +1,6 @@
 import Extension, {Logger, Type} from './Library/Extension.js';
 
-console.log('Create a Adressbar-Component.');
+console.log('Create a Addressbar-Component.');
 
 /* Wait, if the Engine was loaded... */
 Extension.on('engineInit', () => {

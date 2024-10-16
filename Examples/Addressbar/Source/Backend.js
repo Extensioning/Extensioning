@@ -1,6 +1,6 @@
 import Extension, {Logger, Type} from './Library/Extension.js';
 
-console.log('Create a Adressbar-Component.');
+console.log('Create a Addressbar-Component.');
 
 /* Wait, if the Engine was loaded... */
 Extension.on('engineInit', () => {
@@ -10,7 +10,6 @@ Extension.on('engineInit', () => {
 
         /* Set the Components-Data...*/
         component.setText('My Button');
-        component.setContent("MyContent.html");
         component.setIcon('Assets/Icons/Red.png');
         component.onClick((event) => {
             console.log('Button was clicked!', event);

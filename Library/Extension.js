@@ -37,6 +37,19 @@ export default (new class Extension {
         this.Events.on(name, callback);
     }
 
+    getTabs() {
+       switch(this.Engine) {
+           case Engine.MOZILLA:
+               return Mozilla.getTabs();
+           break;
+           default:
+               return new Promise((success, failure) => {
+                   failure('Engine not implemented!');
+               });
+           break;
+       }
+    }
+
     findEngine(destination) {
         return new Promise((success, failure) => {
             try {
@@ -104,6 +117,14 @@ export default (new class Extension {
                     }
                     break;
                 case Type.ADDRESSBAR:
+                    switch (this.Engine) {
+                        case Engine.CHROME:
+                            break;
+                        case Engine.MOZILLA:
+                            Mozilla.createAddressbar(this).then(success).catch(failure);
+                            break;
+                    }
+                    break;
                 case Type.CONTEXTMENU:
                 case Type.SIDEBAR:
                 case Type.OPTIONS:

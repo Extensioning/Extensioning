@@ -66,13 +66,25 @@ export default class Firefox {
         }
 
         if (typeof (config.permissions) !== 'undefined') {
+            let tabs = false;
+
             config.permissions.forEach((entry) => {
-                if (entry === 'Toolbar') {
-                    manifest.browser_action = {};
-                    manifest.permissions.push('activeTab');
-                    manifest.permissions.push('tabs');
+                switch(entry) {
+                    case 'Toolbar':
+                        manifest.browser_action = {};
+                        tabs = true;
+                    break;
+                    case 'Addressbar':
+                        manifest.page_action = {};
+                        tabs = true;
+                    break;
                 }
             });
+
+            if(tabs) {
+                manifest.permissions.push('activeTab');
+                manifest.permissions.push('tabs');
+            }
         }
 
         return manifest;
