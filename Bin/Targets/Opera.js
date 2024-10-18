@@ -48,15 +48,15 @@ export default class Opera {
             });
         }
 
-        if (typeof (config.proccess) !== 'undefined') {
+        if (typeof (config.process) !== 'undefined') {
             manifest.background = {
                 persistent: true,
                 scripts: [
-                    config.proccess.file
+                    config.process.file
                 ]
             };
 
-            if (typeof (config.proccess.type) !== 'undefined' && config.proccess.type === 'module') {
+            if (typeof (config.process.type) !== 'undefined' && config.process.type === 'module') {
                 manifest.background.type = 'module';
             }
         }

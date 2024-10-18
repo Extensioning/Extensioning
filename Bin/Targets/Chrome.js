@@ -33,12 +33,12 @@ export default class Chrome {
             });
         }
 
-        if (typeof (config.proccess) !== 'undefined') {
+        if (typeof (config.process) !== 'undefined') {
             manifest.background = {
-                service_worker: config.proccess.file
+                service_worker: config.process.file
             };
 
-            if (typeof (config.proccess.type) !== 'undefined' && config.proccess.type === 'module') {
+            if (typeof (config.process.type) !== 'undefined' && config.process.type === 'module') {
                 manifest.background.type = 'module';
             }
         }

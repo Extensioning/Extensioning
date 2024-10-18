@@ -17,7 +17,7 @@
     "48": "Assets/Icons/Logo_48.png",
     "96": "Assets/Icons/Logo_96.png"
   },
-  "proccess": {
+  "process": {
     "type": "module",
     "file": "Backend.js"
   },

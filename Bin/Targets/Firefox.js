@@ -52,7 +52,7 @@ export default class Firefox {
             });
         }
 
-        if (typeof (config.proccess) !== 'undefined') {
+        if (typeof (config.process) !== 'undefined') {
             manifest.background = {
                 persistent: true,
                 scripts: [
@@ -60,7 +60,7 @@ export default class Firefox {
                 ]
             };
 
-            if (typeof (config.proccess.type) !== 'undefined' && config.proccess.type === 'module') {
+            if (typeof (config.process.type) !== 'undefined' && config.process.type === 'module') {
                 manifest.background.type = 'module';
             }
         }
@@ -69,19 +69,19 @@ export default class Firefox {
             let tabs = false;
 
             config.permissions.forEach((entry) => {
-                switch(entry) {
+                switch (entry) {
                     case 'Toolbar':
                         manifest.browser_action = {};
                         tabs = true;
-                    break;
+                        break;
                     case 'Addressbar':
                         manifest.page_action = {};
                         tabs = true;
-                    break;
+                        break;
                 }
             });
 
-            if(tabs) {
+            if (tabs) {
                 manifest.permissions.push('activeTab');
                 manifest.permissions.push('tabs');
             }
