@@ -5,11 +5,12 @@ import DefaultBrowser from 'default-browser';
 import * as ChromeLauncher from "chrome-launcher";
 import {template} from 'chalk-template';
 import FirefoxFinder from "./Helpers/FirefoxFinder.js";
+import OperaFinder from "./Helpers/OperaFinder.js";
 
 class Development {
     Browser = null;
     Version = '1.0.0';
-    Browsers = ['Firefox', 'Chrome'];
+    Browsers = ['Firefox', 'Chrome', 'Opera'];
 
     constructor() {
         /*if (process.argv.slice(2).length === 0) {
@@ -92,8 +93,14 @@ class Development {
             let installed = false;
 
             switch (name) {
+                case 'Opera':
+                    try {
+                        OperaFinder.getPath();
+                        installed = true;
+                    } catch (e) {
+                    }
+                    break;
                 case 'Firefox':
-
                     try {
                         FirefoxFinder.getPath();
                         installed = true;
@@ -129,12 +136,37 @@ class Development {
             case 'Chrome':
                 this.startChrome();
                 break;
+            case 'Opera':
+                this.startOpera();
+                break;
             default:
                 Logger.error('The Browser will currently not supported:', this.Browser);
                 Logger.warn('Following Browsers currently available: {cyan ' + this.Browsers.join('}, {cyan ') + '}');
                 Logger.info('You can select given browser by type {bgWhiteBright.black npm run dev }{bgWhiteBright.redBright browser=<name>}\n\t       or type {bgWhiteBright.black npm run dev }{bgWhiteBright.redBright list} for more informations.');
                 break;
         }
+    }
+
+    startOpera() {
+        ChromeLauncher.launch({
+            chromePath: OperaFinder.getPath(),
+            startingUrl: 'opera://extensions',
+            chromeFlags: [
+                '--disable-features=enableasyncdns',
+                '--load-extension=' + Path.resolve(import.meta.dirname, '../Build/opera/'),
+                '--dev',
+                '--enable-logging',
+                '--test-type=ui',
+                '--homepage=opera://extensions',
+                '--allow-running-insecure-content',
+                '--auto-open-devtools-for-tabs',
+                '--enable-auto-reload'
+            ]
+        }).then(chrome => {
+
+        }).catch(r => {
+            console.error(r);
+        });
     }
 
     startFirefox() {

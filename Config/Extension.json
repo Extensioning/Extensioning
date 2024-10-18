@@ -5,7 +5,8 @@
   "debug": true,
   "browsers": [
     "chrome",
-    "firefox"
+    "firefox",
+    "opera"
   ],
   "author": {
     "name": "John Doe",
